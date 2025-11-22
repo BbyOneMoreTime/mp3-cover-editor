@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>MP3 Metadata Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 30px;
+        }
+        .container {
+            width: 420px;
+            background: #181818;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px #00000055;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 18px;
+        }
+        label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        input[type="file"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: none;
+        }
+        input[type="text"] {
+            background: #282828;
+            color: white;
+        }
+        .preview-cover {
+            width: 200px;
+            height: 200px;
+            background: #333;
+            display: block;
+            margin: 15px auto;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1db954;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #1ed760;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>🎵 MP3 Editor (Spotify Style)</h2>
+
+    <form action="/update-mp3" method="POST" enctype="multipart/form-data">
+
+        <div class="input-group">
+            <label>Chọn file MP3</label>
+            <input type="file" name="mp3file" accept=".mp3" required>
+        </div>
+
+        <div class="input-group">
+            <label>Tiêu đề (Title)</label>
+            <input type="text" name="title" placeholder="My Song">
+        </div>
+
+        <div class="input-group">
+            <label>Nghệ sĩ (Artist)</label>
+            <input type="text" name="artist" placeholder="Artist Name">
+        </div>
+
+        <div class="input-group">
+            <label>Album</label>
+            <input type="text" name="album" placeholder="Album Name">
+        </div>
+
+        <div class="input-group">
+            <label>Ảnh bìa mới</label>
+            <input type="file" name="cover" accept="image/*" onchange="previewImage(event)">
+        </div>
+
+        <img id="coverPreview" class="preview-cover" src="" alt="Preview ảnh bìa">
+
+        <button type="submit">💾 Lưu MP3</button>
+    </form>
+</div>
+
+<script>
+function previewImage(event) {
+    const img = document.getElementById("coverPreview");
+    img.src = URL.createObjectURL(event.target.files[0]);
+}
+</script>
+
+</body>
+</html>
