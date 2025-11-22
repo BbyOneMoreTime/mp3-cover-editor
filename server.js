@@ -7,6 +7,7 @@ const path = require("path");
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
+if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
 if (!fs.existsSync("output")) fs.mkdirSync("output");
 
 app.use(express.urlencoded({ extended: true }));
@@ -17,30 +18,39 @@ app.post("/update-mp3", upload.fields([
     { name: "cover" }
 ]), (req, res) => {
 
-    const mp3Path = path.resolve(req.files["mp3file"][0].path);
-    const cover = req.files["cover"] ? path.resolve(req.files["cover"][0].path) : null;
+    const mp3File = req.files["mp3file"][0];
+    const mp3Path = path.resolve(mp3File.path);
+    const coverFile = req.files["cover"] ? req.files["cover"][0] : null;
 
-    const outputPath = path.resolve("output", "mp3-updated-" + Date.now() + ".mp3");
+    const outputPath = path.resolve("output", "updated-" + Date.now() + ".mp3");
 
     fs.copyFileSync(mp3Path, outputPath);
 
+    let title = req.body.title?.trim();
+    if (!title) {
+        title = mp3File.originalname.replace(/\.mp3$/i, "");
+    }
+
     const tags = {
-        title: req.body.title || "",
+        title: title,
         artist: req.body.artist || "",
-        album: req.body.album || "",
+        album: req.body.album || ""
     };
 
-    if (cover) {
-        tags.image = cover;
+    if (coverFile) {
+        tags.image = coverFile.path;
     }
 
     NodeID3.write(tags, outputPath);
 
     res.download(outputPath, "updated.mp3", () => {
         fs.unlinkSync(mp3Path);
-        if (cover) fs.unlinkSync(cover);
+        if (coverFile) fs.unlinkSync(coverFile.path);
     });
 });
+
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

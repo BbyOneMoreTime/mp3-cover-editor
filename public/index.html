@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>MP3 Metadata Editor</title>
+    <title>MP3 Metadata Editor (Spotify Style)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -73,38 +73,49 @@
 
     <form action="/update-mp3" method="POST" enctype="multipart/form-data">
 
+        <!-- File MP3 -->
         <div class="input-group">
             <label>Chọn file MP3</label>
-            <input type="file" name="mp3file" accept=".mp3" required>
+            <input type="file" name="mp3file" accept=".mp3" required onchange="autoFillTitle(event)">
         </div>
 
+        <!-- Metadata -->
         <div class="input-group">
             <label>Tiêu đề (Title)</label>
-            <input type="text" name="title" placeholder="My Song">
+            <input type="text" name="title" placeholder="Tên bài hát">
         </div>
 
         <div class="input-group">
             <label>Nghệ sĩ (Artist)</label>
-            <input type="text" name="artist" placeholder="Artist Name">
+            <input type="text" name="artist" placeholder="Tên nghệ sĩ">
         </div>
 
         <div class="input-group">
             <label>Album</label>
-            <input type="text" name="album" placeholder="Album Name">
+            <input type="text" name="album" placeholder="Tên album">
         </div>
 
+        <!-- Cover -->
         <div class="input-group">
             <label>Ảnh bìa mới</label>
             <input type="file" name="cover" accept="image/*" onchange="previewImage(event)">
         </div>
 
-        <img id="coverPreview" class="preview-cover" src="" alt="Preview ảnh bìa">
+        <img id="coverPreview" class="preview-cover" src="" alt="Preview">
 
         <button type="submit">💾 Lưu MP3</button>
     </form>
 </div>
 
 <script>
+function autoFillTitle(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const title = file.name.replace(/\.mp3$/i, "");
+    document.querySelector("input[name='title']").value = title;
+}
+
 function previewImage(event) {
     const img = document.getElementById("coverPreview");
     img.src = URL.createObjectURL(event.target.files[0]);
