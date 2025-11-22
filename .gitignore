@@ -14,8 +14,6 @@ pnpm-debug.log*
 .DS_Store
 
 # Uploaded files (optional)
-uploads/
-output/
 
 # Temporary
 tmp/
