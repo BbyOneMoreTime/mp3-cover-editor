@@ -101,6 +101,13 @@
             <input type="file" name="cover" accept="image/*" onchange="previewImage(event)">
         </div>
 
+        <div class="input-group">
+            <label>Dùng link ảnh (thay vì upload)</label>
+            <input type="text" name="coverUrlInput" placeholder="Dán link ảnh (https://...)">
+            <button type="button" onclick="applyCoverUrl()" style="margin-top:8px;">Áp dụng link ảnh</button>
+            <input type="hidden" name="coverUrl" value="">
+        </div>
+
         <img id="coverPreview" class="preview-cover" src="" alt="Preview">
 
         <button type="submit">💾 Lưu MP3</button>
@@ -119,6 +126,36 @@ function autoFillTitle(e) {
 function previewImage(event) {
     const img = document.getElementById("coverPreview");
     img.src = URL.createObjectURL(event.target.files[0]);
+    // clear any URL-based cover when a file is chosen
+    const hidden = document.querySelector("input[name='coverUrl']");
+    const urlInput = document.querySelector("input[name='coverUrlInput']");
+    if (hidden) hidden.value = "";
+    if (urlInput) urlInput.value = "";
+}
+
+function applyCoverUrl() {
+    const urlInput = document.querySelector("input[name='coverUrlInput']");
+    const hidden = document.querySelector("input[name='coverUrl']");
+    const fileInput = document.querySelector("input[name='cover']");
+    const img = document.getElementById("coverPreview");
+    if (!urlInput) return;
+    let url = urlInput.value.trim();
+    if (!url) { alert('Vui lòng nhập URL ảnh'); return; }
+    // normalize common cases: protocol-relative and missing scheme
+    if (url.startsWith('//')) url = 'https:' + url;
+    else if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(url)) url = 'https://' + url;
+
+    try {
+        new URL(url);
+    } catch (e) {
+        alert('URL không hợp lệ');
+        return;
+    }
+
+    img.src = url;
+    if (hidden) hidden.value = url;
+    // clear file input so server knows to use the URL instead
+    if (fileInput) fileInput.value = "";
 }
 </script>
 
